@@ -1,12 +1,46 @@
 import '../styles/AddUser.css'
+import {useEffect, useState} from "react";
+import  Axios from "axios";
+import UserItem from "./UserItem";
 const AddUser = () => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [userName, setUserName] = useState('');
+    const [status, setStatus] = useState('');
+    const [location, setLocation] = useState('');
+    const [phone, setPhone] = useState('');
+    const [profile, setProfile] = useState('');
+    const [listNinja, setListNinja] = useState([]);
+
+    useEffect(() => {
+        Axios.get("http://localhost:3001/api/ninjas")
+            .then(response =>{
+                setListNinja(response.data)
+            })
+
+    }, [listNinja]);
+
+
+    const submitUser = () => {
+        Axios.post("http://localhost:3001/api/add", {
+            firstName: firstName,
+            lastName: lastName,
+            userName: userName,
+            status: status,
+            location:location,
+            phone: phone,
+            profile: profile
+        }).then(() => {
+            alert('successful insert')
+        })
+    }
     return (
         <div className="mt-5 mb-2">
             <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                 Add Ninja
             </button>
 
-            <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            <div className="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel"
                  aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
@@ -22,11 +56,11 @@ const AddUser = () => {
                                     <div className="row">
                                         <div className="col">
                                             <label>First name</label>
-                                            <input type="text" className="form-control"/>
+                                            <input type="text" name="firstName" onChange={e => setFirstName(e.target.value)} className="form-control"/>
                                         </div>
                                         <div className="col">
                                             <label>Last name</label>
-                                            <input type="text" className="form-control"/>
+                                            <input type="text" name="lastName" onChange={e => setLastName(e.target.value)} className="form-control"/>
                                         </div>
                                     </div>
                                 </div>
@@ -34,12 +68,12 @@ const AddUser = () => {
                                     <div className="row">
                                         <div className="col">
                                             <label>Username</label>
-                                            <input type="text" className="form-control"/>
+                                            <input type="text" name="userName" onChange={e => setUserName(e.target.value)} className="form-control"/>
                                         </div>
                                         <div className="col">
                                             <label htmlFor="inputState">Status</label>
-                                            <select id="inputState" className="form-control">
-                                                <option selected>Choose</option>
+                                            <select id="inputState" name="status" onChange={e => setStatus(e.target.value.toLowerCase())} className="form-control">
+                                                <option defaultValue>Choose</option>
                                                 <option>Active</option>
                                                 <option>Inactive</option>
                                             </select>
@@ -50,18 +84,22 @@ const AddUser = () => {
                                     <div className="row">
                                         <div className="col">
                                             <label>Location</label>
-                                            <input type="text" className="form-control"/>
+                                            <input type="text" name="location" onChange={e => setLocation(e.target.value)} className="form-control"/>
                                         </div>
                                         <div className="col">
                                             <label>Phone</label>
-                                            <input type="text" className="form-control"/>
+                                            <input type="text" name="phone" onChange={e => setPhone(e.target.value)} className="form-control"/>
                                         </div>
                                     </div>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="exampleFormControlFile1">Profile Picture</label>
+                                    <input type="file" name="photoProfile" onChange={e => setProfile("/opt/lammp")} className="form-control-file" id="exampleFormControlFile1"/>
                                 </div>
 
                             </form>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-primary">Add</button>
+                                <button type="button" className="btn btn-primary" onClick={submitUser}>Add</button>
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
                             </div>
                         </div>
@@ -83,46 +121,7 @@ const AddUser = () => {
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                        <img src="https://play-lh.googleusercontent.com/tWOCFum34rKMnhBEQJLHHjRV6qQdlwDCdn4YIY5Yly9LIcuqdtdiGmeWq7XHnmekEC2z"
-                             className="rounded-circle img-fluid float-left mr-3"
-                             alt=""/>
-                        <div>
-                            <span className="font-weight-bold">Uzumaki Naruto</span>
-                            <p className="text-muted">@nanadaime</p>
-                        </div>
-                    </td>
-                    <td>
-                        <i className="fa fa-circle text-success" aria-hidden="true"/> Active
-                    </td>
-                    <td>Konoha</td>
-                    <td>+001234566</td>
-                    <td><button className="btn btn-primary">Contact</button></td>
-                    <td>
-                        <div className="dropdown">
-                            <button className="btn btn-secondary " type="button" id="dropdownMenu2"
-                                    data-toggle="dropdown" aria-expanded="false">
-                                <i className="fa fa-ellipsis-v" aria-hidden="true"/>
-                            </button>
-                            <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                <button className="dropdown-item text-warning" type="button">
-                                    <i className="fa fa-edit" aria-hidden="true"/>
-                                    Edit
-                                </button>
-                                <button className="dropdown-item text-danger" type="button">
-                                    <i className="fa fa-trash" aria-hidden="true"/>
-                                     Delete
-                                </button>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-
-
-
-
+                <UserItem ninja={listNinja}/>
                 </tbody>
             </table>
         </div>

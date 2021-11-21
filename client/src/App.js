@@ -5,7 +5,7 @@ function App() {
     return (
         <main className='container'>
             <Banner/>
-            <AddUser/>
+            <AddUser />
         </main>
     );
 }
